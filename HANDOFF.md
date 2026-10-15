@@ -4,7 +4,7 @@
 
 | What | Where |
 |---|---|
-| **This repo** (servo jog server, P4 firmware for the Waveshare board, patches, calibration) | `https://github.com/sitevue/orcahand-inhouse`, branch **`ESP-Bus-Test`** |
+| **This repo** (servo jog server, P4 firmware for the Waveshare board, patches, calibration) | `https://github.com/jwschwieger/orcahand-inhouse`, branch **`ESP-Bus-Test`** |
 | Hand server + `/control` slider page (PC-side, used before the P4) | `https://github.com/sitevue/OrcaHand-Corndog-Pickup`, branch `CornbotLocalControl` (7a929b52), then `git apply hand-server/control-page-servo-numbers.patch` from this repo |
 | Upstream of the P4 firmware | `https://github.com/sitevue/playground.vuehand`, `firmware/vuehand_p4/` (Will's). The copy here is master 1a02536 + the left/right `VH_HAND_SIDE` option (b9738eb, not merged upstream) + the Waveshare changes in `firmware/waveshare-p4-changes.patch` |
 
