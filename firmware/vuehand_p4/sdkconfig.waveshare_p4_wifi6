@@ -1,0 +1,9 @@
+# Waveshare ESP32-P4-WIFI6 overrides, layered on sdkconfig.defaults:
+#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.waveshare_p4_wifi6" ...
+# This board's USB-C port is a CH343 USB-UART bridge on UART0 (GPIO37/38), not
+# the P4's USB Serial/JTAG, so the JSON command console has to live on UART0.
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+# CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG is not set
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+# The board on the bench (2026-10-15) is P4 silicon v1.3; IDF 5.5 builds for >= v3.1 by default.
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y

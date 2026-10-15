@@ -1,0 +1,55 @@
+diff --git a/hand/scripts/hand_server.py b/hand/scripts/hand_server.py
+index ceafa517..de1ecc47 100644
+--- a/hand/scripts/hand_server.py
++++ b/hand/scripts/hand_server.py
+@@ -1796,6 +1796,8 @@ def config_joints():
+         "joint_ids": h.config.joint_ids,
+         "joint_roms": h.config.joint_roms_dict,
+         "neutral_position": h.config.neutral_position,
++        # joint -> servo ID (control.html shows it beside each slider).
++        "joint_to_motor_map": h.config.joint_to_motor_map,
+     }
+ 
+ 
+diff --git a/hand/viz/control.html b/hand/viz/control.html
+index 3094b46f..40c526e9 100644
+--- a/hand/viz/control.html
++++ b/hand/viz/control.html
+@@ -39,7 +39,8 @@
+ 
+   .finger { margin-bottom: 12px; }
+   .finger h3 { font-size: 0.82rem; margin: 0 0 6px; color: var(--accent-2); font-weight: 600; }
+-  .joint { display: grid; grid-template-columns: 92px 1fr 62px 62px 44px; gap: 8px; align-items: center; padding: 3px 0; font-size: 0.8rem; }
++  .joint .sid { display: inline-block; min-width: 26px; margin-right: 4px; color: var(--accent); font-weight: 600; }
++  .joint { display: grid; grid-template-columns: 122px 1fr 62px 62px 44px; gap: 8px; align-items: center; padding: 3px 0; font-size: 0.8rem; }
+   .joint .name { color: var(--text-dim); font-family: Consolas, ui-monospace, monospace; font-size: 0.76rem; }
+   .joint .track { position: relative; height: 26px; }
+   .joint .band { position: absolute; top: 10px; height: 6px; background: #2a4a5c; border-radius: 3px; pointer-events: none; }
+@@ -275,7 +276,8 @@
+         const lo = rom[0], hi = rom[1];
+         const start = state.neutral[j] !== undefined ? state.neutral[j] : lo;
+         const row = document.createElement("div"); row.className = "joint";
+-        row.innerHTML = '<span class="name" title="' + j + '">' + j + '</span>'
++        const sid = state.motors && state.motors[j] !== undefined ? Math.abs(state.motors[j]) : "?";
++        row.innerHTML = '<span class="name" title="' + j + ' = servo ' + sid + '"><span class="sid">#' + sid + '</span>' + j + '</span>'
+           + '<div class="track"><div class="band"></div><div class="live"></div>'
+           + '<input type="range" min="' + lo + '" max="' + hi + '" step="0.5" value="' + start + '"></div>'
+           + '<span class="val cmd">' + fmt(start) + '</span>'
+@@ -448,7 +450,7 @@
+       if (calWasRunning && !c.running) {
+         calWasRunning = false;
+         log("calibration finished" + (c.warning ? " WITH WARNING: " + c.warning : "") + " -- reloading ROMs, limits and presets", c.warning ? "err" : "ok");
+-        try { const cfg = await api("/config/joints"); state.roms = cfg.joint_roms; state.neutral = cfg.neutral_position || {}; buildJoints(); buildCalScope(); } catch (_) {}
++        try { const cfg = await api("/config/joints"); state.roms = cfg.joint_roms; state.motors = cfg.joint_to_motor_map || {}; state.neutral = cfg.neutral_position || {}; buildJoints(); buildCalScope(); } catch (_) {}
+         state.hw = null; await pollStatus(); await loadPresets();
+       }
+     } catch (_) {}
+@@ -465,7 +467,7 @@
+   // ---------- init ----------
+   async function init() {
+     await loadSide();
+-    try { const c = await api("/config/joints"); state.roms = c.joint_roms; state.neutral = c.neutral_position || {}; buildJoints(); }
++    try { const c = await api("/config/joints"); state.roms = c.joint_roms; state.motors = c.joint_to_motor_map || {}; state.neutral = c.neutral_position || {}; buildJoints(); }
+     catch (e) { log("config load FAILED: " + e.message, "err"); }
+     buildCalScope();
+     await pollStatus(); await loadPresets(); await loadSequences(); await pollLive(); await pollCal();

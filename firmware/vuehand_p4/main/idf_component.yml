@@ -1,0 +1,10 @@
+## IDF Component Manager Manifest File
+## Only needed for the "usb" VH_SERVO_TRANSPORT build (see CMakeLists.txt) --
+## harmless to always declare, the uart-transport build just won't reference
+## any of this code so it gets linked out.
+dependencies:
+  usb_host_ch34x_vcp: "^2"
+  usb_host_cp210x_vcp: "^2"
+  usb_host_ftdi_vcp: "^2"
+  usb_host_vcp: "^1"
+  idf: ">=5.1.0"

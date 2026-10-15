@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrcaHand Servo Jog</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#1d2330; --mut:#6b7280; --line:#e3e6eb; --acc:#2563eb; --on:#16a34a; --warn:#dc2626; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#13161c; --card:#1c2029; --fg:#e6e8ec; --mut:#9aa1ad; --line:#2c323d; --acc:#60a5fa; --on:#4ade80; --warn:#f87171; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.4 system-ui, sans-serif; }
+  header { position:sticky; top:0; z-index:1; display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:12px 16px; background:var(--card); border-bottom:1px solid var(--line); }
+  h1 { font-size:16px; margin:0 auto 0 0; }
+  #status { color:var(--mut); font-size:12px; }
+  button { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:6px; padding:4px 10px; cursor:pointer; }
+  button:hover { border-color:var(--acc); }
+  #release { background:var(--warn); color:#fff; border-color:var(--warn); font-weight:600; padding:8px 16px; }
+  main { padding:12px 16px; display:grid; gap:8px; max-width:1100px; margin:0 auto; }
+  .row { display:grid; grid-template-columns: 150px 1fr auto auto; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px 12px; }
+  .name b { display:block; } .name small { color:var(--mut); }
+  .slide { display:flex; flex-direction:column; gap:2px; }
+  .slide input { width:100%; accent-color:var(--acc); }
+  .nums { display:flex; justify-content:space-between; color:var(--mut); font-size:12px; font-variant-numeric:tabular-nums; }
+  .nums .pos { color:var(--fg); font-weight:600; }
+  .jog { display:flex; gap:4px; }
+  .tq { min-width:84px; }
+  .tq.on { background:var(--on); border-color:var(--on); color:#fff; }
+  @media (max-width:700px) { .row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>OrcaHand Servo Jog</h1>
+  <span id="status">connecting…</span>
+  <button id="release">Release all torque</button>
+</header>
+<main id="rows"></main>
+<script>
+const rows = document.getElementById('rows'), statusEl = document.getElementById('status');
+const built = {}; let dragging = null;
+
+async function post(path, body) {
+  const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  return r.json();
+}
+function build(id, s) {
+  const el = document.createElement('div'); el.className = 'row';
+  el.innerHTML = `
+    <div class="name"><b>${s.joint}</b><small>servo ${id}</small></div>
+    <div class="slide">
+      <input type="range" min="${s.min}" max="${s.max}" step="1" value="${s.pos ?? s.home}">
+      <div class="nums"><span>${s.min}</span><span>pos <span class="pos">–</span> · goal <span class="goal">–</span> · load <span class="load">–</span></span><span>${s.max}</span></div>
+    </div>
+    <div class="jog">${[-50,-10,10,50].map(d => `<button data-d="${d}">${d > 0 ? '+' : ''}${d}</button>`).join('')}</div>
+    <button class="tq">Torque off</button>`;
+  const range = el.querySelector('input');
+  range.addEventListener('pointerdown', () => dragging = id);
+  range.addEventListener('change', async () => { dragging = null; await post('/api/move', {id, pos:+range.value}); });
+  el.querySelectorAll('.jog button').forEach(b => b.addEventListener('click', async () => {
+    const base = built[id].last.goal ?? built[id].last.pos;
+    await post('/api/move', {id, pos: base + +b.dataset.d});
+  }));
+  el.querySelector('.tq').addEventListener('click', async () => {
+    await post('/api/torque', {id, on: !built[id].last.torque});
+  });
+  rows.appendChild(el);
+  built[id] = {el, range, last:s};
+}
+function render(state) {
+  for (const [id, s] of Object.entries(state)) {
+    if (!built[id]) build(+id, s);
+    const b = built[id]; b.last = s;
+    b.el.querySelector('.pos').textContent = s.pos ?? '?';
+    b.el.querySelector('.goal').textContent = s.goal ?? '–';
+    b.el.querySelector('.load').textContent = s.load ?? '?';
+    const tq = b.el.querySelector('.tq');
+    tq.textContent = s.torque ? 'Torque on' : 'Torque off';
+    tq.classList.toggle('on', !!s.torque);
+    if (dragging !== +id && s.pos != null) b.range.value = s.goal ?? s.pos;
+  }
+}
+async function poll() {
+  try {
+    const st = await (await fetch('/api/state')).json();
+    render(st);
+    statusEl.textContent = `${Object.keys(st).length} servos · live`;
+  } catch { statusEl.textContent = 'server not reachable'; }
+  setTimeout(poll, 400);
+}
+document.getElementById('release').addEventListener('click', () => post('/api/torque', {id:'all', on:false}));
+poll();
+</script>
+</body>
+</html>
