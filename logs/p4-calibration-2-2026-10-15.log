@@ -1,0 +1,38 @@
+I (212541) motorcal: holding 17/17 motors at present position for the sweep
+I (235921) motorcal: motor 1: verify lo 18 -> 34 (stalled), hi 1677 -> 1654 (stalled)
+W (235921) motorcal: motor 1: low end 34 is at the encoder edge -- inset to 300
+I (235924) motorcal: motor 1: lo=300 hi=1654 span=1354 dir=1 (HIT BOUND)
+W (258886) motorcal: motor 2: probe budget exhausted, giving up on this end
+I (263766) motorcal: motor 2: verify lo 619 -> 645 (stalled), hi 1568 -> 1538 (stalled)
+I (263766) motorcal: motor 2: lo=645 hi=1538 span=893 dir=-1
+I (266496) motorcal: motor 3: verify lo 1623 -> 1632 (stalled), hi 1638 -> 1633 (arrived)
+W (266496) motorcal: motor 3: span only 1 ticks (<60) -- jammed or dead, disabled
+I (268721) motorcal: motor 4: verify lo 881 -> 881 (arrived), hi 881 -> 881 (arrived)
+W (268721) motorcal: motor 4: span only 0 ticks (<60) -- jammed or dead, disabled
+I (277151) motorcal: motor 5: verify lo 551 -> 573 (stalled), hi 936 -> 918 (stalled)
+I (277151) motorcal: motor 5: lo=573 hi=918 span=345 dir=-1
+I (284986) motorcal: motor 6: verify lo 584 -> 602 (stalled), hi 943 -> 925 (stalled)
+I (284986) motorcal: motor 6: lo=602 hi=925 span=323 dir=-1
+I (302441) motorcal: motor 7: verify lo 2056 -> 2072 (stalled), hi 3599 -> 3581 (stalled)
+I (302441) motorcal: motor 7: lo=2072 hi=3581 span=1509 dir=1
+I (320626) motorcal: motor 8: verify lo 488 -> 508 (stalled), hi 1770 -> 1749 (stalled)
+I (320626) motorcal: motor 8: lo=508 hi=1749 span=1241 dir=-1
+I (339501) motorcal: motor 9: verify lo 501 -> 518 (stalled), hi 1754 -> 1736 (stalled)
+I (339501) motorcal: motor 9: lo=518 hi=1736 span=1218 dir=-1
+I (360856) motorcal: motor 10: verify lo 493 -> 511 (stalled), hi 2043 -> 2027 (stalled)
+I (360856) motorcal: motor 10: lo=511 hi=2027 span=1516 dir=-1
+I (375016) motorcal: motor 11: verify lo 2479 -> 2493 (stalled), hi 3600 -> 3582 (stalled)
+I (375016) motorcal: motor 11: lo=2493 hi=3582 span=1089 dir=1
+I (395781) motorcal: motor 12: verify lo 493 -> 511 (stalled), hi 1790 -> 1766 (stalled)
+I (395781) motorcal: motor 12: lo=511 hi=1766 span=1255 dir=-1
+I (405441) motorcal: motor 13: verify lo 2969 -> 2986 (stalled), hi 3493 -> 3474 (stalled)
+I (405441) motorcal: motor 13: lo=2986 hi=3474 span=488 dir=1
+I (414501) motorcal: motor 14: verify lo 485 -> 503 (stalled), hi 997 -> 981 (stalled)
+I (414501) motorcal: motor 14: lo=503 hi=981 span=478 dir=-1
+I (435546) motorcal: motor 15: verify lo 556 -> 582 (stalled), hi 1875 -> 1853 (stalled)
+I (435546) motorcal: motor 15: lo=582 hi=1853 span=1271 dir=-1
+I (454421) motorcal: motor 16: verify lo 485 -> 504 (stalled), hi 1753 -> 1734 (stalled)
+I (454421) motorcal: motor 16: lo=504 hi=1734 span=1230 dir=-1
+I (463396) motorcal: motor 17: verify lo 478 -> 495 (stalled), hi 1022 -> 1002 (stalled)
+I (463396) motorcal: motor 17: lo=495 hi=1002 span=507 dir=-1
+W (463651) motorcal: autocalibration done: 15 measured, 2 disabled
